@@ -35,7 +35,7 @@ export default async function handler(request, response) {
     providerData.estado = 'Recibido';
 
     // --- Validación de Backend (Capa de Seguridad Crítica) ---
-    const requiredFields = ['nombreCompleto', 'tipoDocumento', 'cedula', 'email', 'telefono', 'entidadBancaria', 'numeroCuenta'];
+    const requiredFields = ['nombreCompleto', 'tipoDocumento', 'cedula', 'email', 'telefono', 'direccion', 'entidadBancaria', 'numeroCuenta'];
     for (const field of requiredFields) {
       if (!providerData[field]) {
         return response.status(400).json({ message: `El campo de texto '${field}' es obligatorio.` });
@@ -49,7 +49,8 @@ export default async function handler(request, response) {
         { name: 'rutFile', label: 'RUT', required: true },
         { name: 'certBancario', label: 'Certificado Bancario', required: true },
         { name: 'hojaVida', label: 'Hoja de Vida', required: false },
-        { name: 'certAfiliacion', label: 'Certificados de Afiliación', required: false }
+        { name: 'certEPS', label: 'Certificado Afiliacion EPS', required: false },
+        { name: 'certPension', label: 'Certificado Afiliacion Pension', required: false }
     ];
 
     for (const expectedFile of expectedFiles) {
