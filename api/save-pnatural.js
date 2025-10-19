@@ -1,125 +1,129 @@
-import { db } from '../lib/firebaseAdmin';
+import { db } from '../../lib/firebaseAdmin';
 import { Resend } from 'resend';
+import { v2 as cloudinary } from 'cloudinary';
+import formidable from 'formidable';
 
-// Inicializamos Resend con la API key de las variables de entorno.
+// Configuración de Resend para correos
 const resend = new Resend(process.env.RESEND2_API_KEY);
 
-// Esta es la configuración de la función Serverless de Vercel.
-// Desactivamos el bodyParser por defecto porque vamos a manejar FormData.
+// Configuración de Cloudinary (toma la configuración de la variable de entorno CLOUDINARY_URL)
+cloudinary.config({
+  secure: true,
+});
+
+// Vercel necesita esta configuración para manejar la carga de archivos
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-/**
- * Handler para la API que recibe y procesa el registro de una persona natural.
- */
 export default async function handler(request, response) {
-  // 1. VERIFICACIÓN DEL MÉTODO
-  // Solo permitimos solicitudes POST a este endpoint.
   if (request.method !== 'POST') {
     return response.status(405).json({ message: 'Método no permitido. Use POST.' });
   }
 
   try {
-    // 2. PARSEO DE FORMDATA
-    // request.formData() lee el cuerpo de la solicitud, que contiene
-    // tanto los campos de texto como los archivos.
-    const formData = await request.formData();
+    const form = formidable({});
+    const [fields, files] = await form.parse(request);
 
-    // 3. EXTRACCIÓN Y VALIDACIÓN DE DATOS
-    // Creamos un objeto para almacenar los datos del proveedor.
-    const providerData = {
-      tipo: 'Persona Natural',
-      fechaRegistro: new Date().toISOString(), // Guardamos la fecha de creación
-      estado: 'Recibido', // Estado inicial del proceso
-    };
+    // Normalizamos los datos del formulario
+    const providerData = Object.fromEntries(
+      Object.entries(fields).map(([key, value]) => [key, Array.isArray(value) ? value[0] : value])
+    );
     
-    // Lista de campos de texto esperados del formulario.
-    const fields = [
-      'nombreCompleto', 'cedula', 'direccion', 'pais', 'departamento',
-      'ciudad', 'paisManual', 'ciudadManual', 'telefono', 'email',
-      'tipoProveedor', 'regimenTributario', 'actividadEconomica',
-      'responsableIva', 'entidadBancaria', 'tipoCuenta', 'numeroCuenta', 'titularCuenta'
-    ];
+    providerData.tipo = 'Persona Natural';
+    providerData.fechaRegistro = new Date().toISOString();
+    providerData.estado = 'Recibido';
 
-    // Recorremos los campos, los extraemos de formData y los añadimos a nuestro objeto.
-    fields.forEach(field => {
-      const value = formData.get(field);
-      if (value) {
-        providerData[field] = value;
-      }
-    });
-
-    // Validación de campos obligatorios en el backend. ¡Esto es crucial!
-    const requiredFields = ['nombreCompleto', 'cedula', 'email', 'entidadBancaria', 'numeroCuenta', 'titularCuenta'];
+    // Validación de backend
+    const requiredFields = ['nombreCompleto', 'cedula', 'email', 'telefono', 'entidadBancaria', 'numeroCuenta'];
     for (const field of requiredFields) {
       if (!providerData[field]) {
         return response.status(400).json({ message: `El campo '${field}' es obligatorio.` });
       }
     }
 
-    // 4. MANEJO DE ARCHIVOS (METADATA POR AHORA)
-    const fileCount = parseInt(formData.get('fileCount') || '0', 10);
-    const filesMetadata = [];
-    if (fileCount > 0) {
-      for (let i = 0; i < fileCount; i++) {
-        const file = formData.get(`file${i}`);
-        if (file) {
-          filesMetadata.push({
-            name: file.name,
-            size: file.size,
-            type: file.type,
+    // --- LÓGICA DE CARGA DE ARCHIVOS CON CLOUDINARY ---
+    const uploadedFileUrls = [];
+    const fileKeys = Object.keys(files);
+
+    for (const key of fileKeys) {
+      const fileArray = files[key];
+      if (fileArray && fileArray.length > 0) {
+        const file = fileArray[0];
+        try {
+          const result = await cloudinary.uploader.upload(file.filepath, {
+            folder: `portal_idi/natural/${providerData.cedula}`,
+            public_id: file.originalFilename,
+            resource_type: 'auto'
           });
-          // TODO: Implementar subida a Firebase Storage.
-          // Aquí es donde iría la lógica para subir el 'file' a un bucket de Firebase Storage
-          // y obtener la URL de descarga. Esa URL se guardaría en lugar de la metadata.
-          // Ejemplo: const fileUrl = await uploadToFirebaseStorage(file);
-          // providerData.documentos.push({ name: file.name, url: fileUrl });
+          uploadedFileUrls.push({
+            nombre: file.originalFilename,
+            url: result.secure_url,
+            tipo: file.mimetype,
+          });
+        } catch (uploadError) {
+          console.error("Error al subir archivo a Cloudinary:", uploadError);
+          // Si un archivo falla, podemos decidir si continuar o detener todo el proceso
+          return response.status(500).json({ message: 'Error al subir uno de los archivos.' });
         }
       }
     }
-    providerData.archivosAdjuntos = filesMetadata;
+    
+    providerData.archivosAdjuntos = uploadedFileUrls;
 
-    // 5. GUARDADO EN FIRESTORE
-    // Usamos la instancia 'db' de nuestro archivo de inicialización.
+    // Guardado en Firestore
     const docRef = await db.collection('proveedores_naturales').add(providerData);
 
-    // 6. NOTIFICACIÓN POR CORREO
-    try {
-        await resend.emails.send({
-            from: 'Portal Proveedores <no-reply@tu-dominio.com>', // Configura un dominio en Resend
-            to: ['admin@fundacionidi.edu.co'], // Correo del administrador
-            subject: 'Nuevo Proveedor (Persona Natural) Registrado',
-            html: `
-                <h1>Nuevo Registro en el Portal de Proveedores</h1>
-                <p>Se ha registrado un nuevo proveedor (Persona Natural):</p>
-                <ul>
-                    <li><strong>Nombre:</strong> ${providerData.nombreCompleto}</li>
-                    <li><strong>Cédula:</strong> ${providerData.cedula}</li>
-                    <li><strong>Email:</strong> ${providerData.email}</li>
-                    <li><strong>Fecha de Registro:</strong> ${new Date(providerData.fechaRegistro).toLocaleString('es-CO')}</li>
-                </ul>
-                <p>ID del documento en Firebase: ${docRef.id}</p>
-                <p>Por favor, inicie sesión en el portal de administración para revisar la solicitud.</p>
-            `,
-        });
-    } catch (emailError) {
-        console.error("Error al enviar el correo de notificación:", emailError);
-        // No detenemos el proceso si el correo falla, pero lo registramos.
-    }
+    // --- LÓGICA DE DOBLE NOTIFICACIÓN POR CORREO ---
+    const adminEmail = 'proyectos@fundacionidi.org'; // Correo del administrador de IDI
+    const providerEmail = providerData.email; // Correo del proveedor
 
+    // 1. Correo para el Administrador de IDI
+    await resend.emails.send({
+      from: 'Portal IDI <onboarding@resend.dev>', // Usar un dominio verificado en Resend
+      to: [adminEmail],
+      subject: `Nuevo Proveedor Registrado: ${providerData.nombreCompleto}`,
+      html: `
+        <h1>Nuevo Registro en el Portal de Proveedores</h1>
+        <p>Se ha registrado un nuevo proveedor (Persona Natural):</p>
+        <ul>
+          <li><strong>Nombre:</strong> ${providerData.nombreCompleto}</li>
+          <li><strong>Cédula:</strong> ${providerData.cedula}</li>
+          <li><strong>Email:</strong> ${providerData.email}</li>
+          <li><strong>Teléfono:</strong> ${providerData.telefono}</li>
+        </ul>
+        <p>Los documentos adjuntos han sido cargados y están listos para revisión en el portal de administración.</p>
+        <p>ID del documento en Firebase: ${docRef.id}</p>
+      `,
+    });
 
-    // 7. RESPUESTA DE ÉXITO
-    return response.status(200).json({ 
+    // 2. Correo de Confirmación para el Proveedor
+    await resend.emails.send({
+      from: 'Fundación IDI <onboarding@resend.dev>', // Usar un dominio verificado en Resend
+      to: [providerEmail],
+      subject: 'Confirmación de Recepción de Documentos - Fundación IDI',
+      html: `
+        <h1>Hemos recibido su información</h1>
+        <p>Hola ${providerData.nombreCompleto},</p>
+        <p>Confirmamos que hemos recibido sus documentos a satisfacción y nuestro equipo procederá a revisarlos para continuar con el proceso de vinculación.</p>
+        <p>El proceso de revisión puede tardar algunos días hábiles.</p>
+        <p>Cualquier inquietud, puede comunicarse con nosotros al correo <strong>${adminEmail}</strong> o al número <strong>3175103393</strong>.</p>
+        <br>
+        <p>Atentamente,</p>
+        <p><strong>Equipo de la Fundación IDI</strong></p>
+      `,
+    });
+
+    return response.status(200).json({
       message: 'Proveedor registrado exitosamente.',
-      providerId: docRef.id 
+      providerId: docRef.id
     });
 
   } catch (error) {
-    // Manejo de errores inesperados
     console.error('Error en /api/save-pnatural:', error);
-    return response.status(500).json({ message: 'Ocurrió un error en el servidor.' });
+    return response.status(500).json({ message: 'Ocurrió un error en el servidor.', error: error.message });
   }
 }
+
