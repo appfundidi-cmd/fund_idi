@@ -10,9 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Iconos de Lucide -->
-    <script src="https://unpkg.com/lucide-react@latest/dist/lucide-react.js"></script>
-
+    
     <style>
         /* Estilo base para usar la fuente Poppins y colores de marca */
         body { 
@@ -129,6 +127,17 @@
             </div>
             <div id="form-container" class="hidden"></div>
         </main>
+    </div>
+
+    <!-- Banner de Cookies -->
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 shadow-lg z-50 transition-transform duration-500 translate-y-full">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <p class="text-sm text-gray-300 mb-4 md:mb-0">
+                Este sitio web utiliza cookies para garantizar que obtenga la mejor experiencia. Al continuar navegando, acepta nuestro uso de cookies.
+                <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:underline ml-1">Más información</a>.
+            </p>
+            <button onclick="acceptCookies()" class="bg-brand text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-blue-900 transition-colors">Aceptar</button>
+        </div>
     </div>
 
     <script>
@@ -253,7 +262,7 @@
                     <div class="flex items-start">
                         <input id="auth-datos-natural" type="checkbox" class="h-4 w-4 text-brand border-gray-300 rounded mt-1" required>
                         <label for="auth-datos-natural" class="ml-3 text-sm text-gray-600">
-                            He leído y acepto la <a href="#" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a> de la Fundación IDI y autorizo el tratamiento de mis datos.
+                            He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a> de la Fundación IDI y autorizo el tratamiento de mis datos.
                         </label>
                     </div>
                     <div class="flex justify-between items-center mt-8">
@@ -338,7 +347,7 @@
                      <div class="flex items-start">
                         <input id="auth-datos-juridica" type="checkbox" class="h-4 w-4 text-brand border-gray-300 rounded mt-1" required>
                         <label for="auth-datos-juridica" class="ml-3 text-sm text-gray-600">
-                            He leído y acepto la <a href="#" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a> de la Fundación IDI y autorizo el tratamiento de datos en nombre de la empresa que represento.
+                            He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a> de la Fundación IDI y autorizo el tratamiento de datos en nombre de la empresa que represento.
                         </label>
                     </div>
                     <div class="flex justify-between items-center mt-8">
@@ -372,7 +381,6 @@
                 setTimeout(() => {
                     formContainer.classList.remove('opacity-0');
                     formContainer.classList.add('transition-opacity', 'duration-300', 'ease-in-out', 'opacity-100');
-                    // Simulación de carga de un componente de uploader
                     const uploadAreaId = type === 'natural' ? 'file-upload-area-natural' : 'file-upload-area-juridica';
                     document.getElementById(uploadAreaId).innerHTML = createFileUploader();
                 }, 50);
@@ -398,7 +406,6 @@
             }, 300);
         }
 
-        // Función para generar un placeholder de cargador de archivos
         function createFileUploader() {
             return `
                 <div class="file-uploader mt-4" onclick="document.getElementById('file-input').click()">
@@ -415,7 +422,6 @@
 
         function handleFiles(files) {
             const fileListContainer = document.getElementById('file-list');
-            // fileListContainer.innerHTML = ''; // Descomentar si no se quieren acumular archivos
             for (const file of files) {
                 const fileElement = document.createElement('div');
                 fileElement.className = 'flex items-center justify-between bg-gray-100 p-2 rounded-lg text-sm';
@@ -426,6 +432,28 @@
                 fileListContainer.appendChild(fileElement);
             }
         }
+
+        // --- LÓGICA DEL BANNER DE COOKIES ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const cookieBanner = document.getElementById('cookie-banner');
+            if (!localStorage.getItem('cookie_consent')) {
+                cookieBanner.classList.remove('hidden');
+                setTimeout(() => {
+                    cookieBanner.classList.remove('translate-y-full');
+                }, 100);
+            }
+        });
+
+        function acceptCookies() {
+            localStorage.setItem('cookie_consent', 'true');
+            const cookieBanner = document.getElementById('cookie-banner');
+            cookieBanner.classList.add('translate-y-full');
+            setTimeout(() => {
+                cookieBanner.classList.add('hidden');
+            }, 500);
+        }
+
     </script>
 </body>
 </html>
