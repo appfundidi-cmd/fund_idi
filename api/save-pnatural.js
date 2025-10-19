@@ -35,12 +35,24 @@ export default async function handler(request, response) {
     providerData.estado = 'Recibido';
 
     // --- Validación de Backend (Capa de Seguridad Crítica) ---
-    const requiredFields = ['nombreCompleto', 'tipoDocumento', 'cedula', 'email', 'telefono', 'direccion', 'entidadBancaria', 'numeroCuenta'];
+    const requiredFields = ['nombreCompleto', 'tipoDocumento', 'cedula', 'email', 'telefono', 'direccion', 'pais', 'entidadBancaria', 'numeroCuenta'];
     for (const field of requiredFields) {
       if (!providerData[field]) {
         return response.status(400).json({ message: `El campo de texto '${field}' es obligatorio.` });
       }
     }
+
+    // Validación condicional para campos de geolocalización
+    if (providerData.pais === 'Colombia') {
+        if (!providerData.departamento || !providerData.ciudad) {
+            return response.status(400).json({ message: 'Departamento y Ciudad son obligatorios para Colombia.' });
+        }
+    } else if (providerData.pais === 'Otro') {
+        if (!providerData.paisManual || !providerData.ciudadManual) {
+            return response.status(400).json({ message: 'País (Manual) y Ciudad (Manual) son obligatorios.' });
+        }
+    }
+
 
     // --- Lógica de Carga de Archivos Específicos con Cloudinary ---
     const uploadedFileUrls = [];
@@ -60,7 +72,6 @@ export default async function handler(request, response) {
             try {
                 const result = await cloudinary.uploader.upload(file.filepath, {
                     folder: `portal_idi/natural/${providerData.cedula}`,
-                    // Usamos el 'label' para un nombre de archivo claro y estandarizado en Cloudinary
                     public_id: `${expectedFile.label.replace(/ /g, '_')}`,
                     resource_type: 'auto'
                 });
@@ -74,7 +85,6 @@ export default async function handler(request, response) {
                 return response.status(500).json({ message: `Error al subir el archivo: ${expectedFile.label}.` });
             }
         } else if (expectedFile.required) {
-            // Si el archivo es requerido y no se adjuntó, la solicitud es inválida
             return response.status(400).json({ message: `El archivo '${expectedFile.label}' es obligatorio.` });
         }
     }
@@ -88,15 +98,13 @@ export default async function handler(request, response) {
     const adminEmail = 'proyectos@fundacionidi.org';
     const providerEmail = providerData.email;
 
-    // 1. Correo para el Administrador de IDI
     await resend.emails.send({
       from: 'Portal IDI <proyectos@emcotic.com>',
       to: [adminEmail],
       subject: `Nuevo Proveedor Registrado: ${providerData.nombreCompleto}`,
-      html: `<h1>Nuevo Registro en el Portal de Proveedores</h1><p>Se ha registrado un nuevo proveedor (Persona Natural):</p><ul><li><strong>Nombre:</strong> ${providerData.nombreCompleto}</li><li><strong>Documento:</strong> ${providerData.tipoDocumento} ${providerData.cedula}</li><li><strong>Email:</strong> ${providerData.email}</li><li><strong>Teléfono:</strong> ${providerData.telefono}</li></ul><p>Los documentos adjuntos han sido cargados y están listos para revisión.</p><p>ID del documento en Firestore: ${docRef.id}</p>`,
+      html: `<h1>Nuevo Registro en el Portal de Proveedores</h1><p>Se ha registrado un nuevo proveedor (Persona Natural):</p><ul><li><strong>Nombre:</strong> ${providerData.nombreCompleto}</li><li><strong>Documento:</strong> ${providerData.tipoDocumento} ${providerData.cedula}</li><li><strong>Email:</strong> ${providerData.email}</li><li><strong>Teléfono:</strong> ${providerData.telefono}</li></ul><p>ID del documento en Firestore: ${docRef.id}</p>`,
     });
 
-    // 2. Correo de Confirmación para el Proveedor
     await resend.emails.send({
       from: 'Fundación IDI <proyectos@emcotic.com>',
       to: [providerEmail],
