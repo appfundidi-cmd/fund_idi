@@ -1,20 +1,20 @@
 {
   "name": "portal-proveedores-idi",
   "version": "1.0.0",
-  "description": "Portal de gestión y registro de proveedores para la Fundación IDI.",
-  "main": "index.html",
+  "description": "Portal de gestión de proveedores para la Fundación IDI.",
+  "main": "index.js",
   "scripts": {
-    "start": "vercel dev"
+    "dev": "vercel dev"
   },
-  "author": "Jorge & IDI",
+  "author": "Jorge y IDI",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "firebase-admin": "^12.1.1",
+    "cloudinary": "^2.2.0",
+    "cookie": "^0.6.0",
+    "firebase-admin": "^12.1.0",
+    "formidable": "^3.5.1",
     "jsonwebtoken": "^9.0.2",
     "resend": "^3.2.0"
-  },
-  "devDependencies": {
-    "vercel": "^34.2.0"
   }
 }
