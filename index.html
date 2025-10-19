@@ -296,6 +296,7 @@
                 input.addEventListener('change', () => {
                     if (input.files.length > 0) {
                         message.textContent = input.files[0].name;
+                        message.classList.add('text-green-600', 'font-semibold');
                         dropZone.style.borderColor = '#22C55E'; // Verde
                     }
                 });
@@ -316,6 +317,7 @@
                     if (files.length > 0) {
                         input.files = files;
                         message.textContent = files[0].name;
+                        message.classList.add('text-green-600', 'font-semibold');
                         dropZone.style.borderColor = '#22C55E'; // Verde
                     }
                 });
@@ -357,7 +359,10 @@
                 if (response.ok) {
                     formMessage.innerHTML = `<p class="text-green-600 font-semibold">¡Información enviada con éxito! Gracias por registrarse.</p>`;
                     form.reset();
-                    document.querySelectorAll('.file-drop-message').forEach(msg => msg.textContent = 'Arrastre o haga clic para subir');
+                    document.querySelectorAll('.file-drop-message').forEach(msg => {
+                        msg.textContent = 'Arrastre o haga clic para subir';
+                        msg.classList.remove('text-green-600', 'font-semibold');
+                    });
                     document.querySelectorAll('.file-drop-zone').forEach(zone => zone.style.borderColor = '');
                 } else {
                     throw new Error(result.message || 'Ocurrió un error al enviar el formulario.');
