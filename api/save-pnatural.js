@@ -82,7 +82,7 @@ export default async function handler(request, response) {
 
     // 1. Correo para el Administrador de IDI
     await resend.emails.send({
-      from: 'Portal IDI <onboarding@resend.dev>', // Usar un dominio verificado en Resend
+      from: 'Portal IDI <proyectos@emcotic.com>', // Usar un dominio verificado en Resend
       to: [adminEmail],
       subject: `Nuevo Proveedor Registrado: ${providerData.nombreCompleto}`,
       html: `
@@ -101,7 +101,7 @@ export default async function handler(request, response) {
 
     // 2. Correo de Confirmación para el Proveedor
     await resend.emails.send({
-      from: 'Fundación IDI <onboarding@resend.dev>', // Usar un dominio verificado en Resend
+      from: 'Fundación IDI <proyectos@emcotic.com>', // Usar un dominio verificado en Resend
       to: [providerEmail],
       subject: 'Confirmación de Recepción de Documentos - Fundación IDI',
       html: `
