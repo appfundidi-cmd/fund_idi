@@ -4,413 +4,432 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de Proveedores - Fundación IDI</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        /* Estilos base y de marca */
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #F8F7F2;
-            color: #4A4A4A;
-        }
-        .text-brand { color: #003366; }
-        .bg-brand { background-color: #003366; }
-        .border-brand { border-color: #003366; }
-        
-        /* Estilos de botones */
-        .btn-brand {
-            background-color: #003366;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 9999px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-brand:hover:not(:disabled) {
-            background-color: #002244;
-            transform: translateY(-2px);
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
-        }
-        .btn-brand:disabled {
-            background-color: #667b99;
-            cursor: not-allowed;
-        }
-        
-        /* Estilos de formularios */
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-            font-size: 0.875rem;
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #D1D5DB;
-            border-radius: 0.5rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #003366;
-            box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.2);
-        }
-        .form-input.is-invalid {
-            border-color: #DC2626; /* red-600 */
-        }
-        
-        /* Estilo para el cargador de archivos */
-        .file-uploader {
-            border: 2px dashed #D1D5DB;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-        .file-uploader:hover {
-            border-color: #003366;
-        }
-
-        /* Estilo para el spinner de carga */
-        .loader {
-            width: 16px;
-            height: 16px;
-            border: 2px solid #FFF;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #F8F7F2; color: #4A4A4A; }
+        .btn-brand { background-color: #003366; color: white; padding: 12px 28px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .btn-brand:hover { background-color: #002244; transform: translateY(-2px); box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1); }
+        .btn-brand:disabled { background-color: #667e99; cursor: not-allowed; transform: none; box-shadow: none; }
+        .card { background-color: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
+        .card-option { cursor: pointer; border: 2px solid transparent; }
+        .card-option:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12); }
+        .card-option.selected { border-color: #003366; box-shadow: 0 15px 30px rgba(0, 51, 102, 0.15); }
+        .input-field { width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-field:focus { border-color: #003366; box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1); outline: none; }
+        .file-input-wrapper { border: 2px dashed #D1D5DB; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .file-input-wrapper:hover { border-color: #003366; background-color: #f7fafc; }
+        .file-input-wrapper.file-loaded { border-color: #28a745; background-color: #f0fff4; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="antialiased">
 
-    <div class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 my-8 transition-all duration-500">
-        
-        <header class="text-center mb-10">
-            <img src="logoprincipal.png" alt="Logo Fundación IDI" class="mx-auto h-16 w-auto mb-6"
-                 onerror="this.onerror=null; this.src='https://placehold.co/200x60/003366/FFFFFF?text=Fundaci%C3%B3n+IDI';">
-            <h1 class="text-3xl md:text-4xl font-bold text-brand">Portal de Gestión de Proveedores</h1>
-            <p class="text-gray-500 mt-2">Fundación para la Investigación, Desarrollo e Innovación I+D+I</p>
-        </header>
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <img src="logoprincipal.png" alt="Logo Fundación IDI" class="h-12">
+            </div>
+        </div>
+    </header>
 
-        <main>
-            <!-- Contenedor para mensajes de respuesta (éxito/error) -->
-            <div id="response-message" class="mb-6"></div>
-
-            <div id="selection-step">
-                <div class="text-center">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-3">Bienvenido</h2>
-                    <p class="text-gray-600 mb-8 max-w-lg mx-auto">Para iniciar el proceso de registro o actualización, por favor seleccione el tipo de proveedor que representa.</p>
+    <!-- Main Content -->
+    <main class="py-12 sm:py-16">
+        <div id="selection-container" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold text-[#003366] tracking-tight">Bienvenido al Portal de Proveedores</h1>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Para iniciar el proceso de inscripción o actualización de datos, por favor, seleccione el tipo de proveedor que corresponde.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Card Persona Natural -->
+                <div id="card-natural" class="card card-option p-8 text-center" onclick="selectType('natural')">
+                    <div class="flex justify-center items-center mb-4">
+                        <svg class="h-16 w-16 text-[#003366]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Persona Natural</h2>
+                    <p class="mt-2 text-gray-500">Profesionales independientes, contratistas y personas que actúan a título personal.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <button onclick="showForm('natural')" class="group text-left p-6 border border-gray-200 rounded-xl hover:shadow-lg hover:border-brand transition duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand">
-                         <div class="flex items-center"><div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div><div><h3 class="font-bold text-lg text-gray-800">Persona Natural</h3><p class="text-gray-500 text-sm">Profesionales independientes</p></div></div>
-                    </button>
-                    <button onclick="showForm('juridica')" class="group text-left p-6 border border-gray-200 rounded-xl hover:shadow-lg hover:border-brand transition duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand">
-                         <div class="flex items-center"><div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><div><h3 class="font-bold text-lg text-gray-800">Persona Jurídica</h3><p class="text-gray-500 text-sm">Empresas y organizaciones</p></div></div>
-                    </button>
+                <!-- Card Persona Jurídica -->
+                <div id="card-juridica" class="card card-option p-8 text-center" onclick="selectType('juridica')">
+                    <div class="flex justify-center items-center mb-4">
+                       <svg class="h-16 w-16 text-[#003366]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6M9 11.25h6m-6 4.5h6M6.75 21v-2.25a2.25 2.25 0 012.25-2.25h6a2.25 2.25 0 012.25 2.25V21M6.75 3V2.25c0-.414.336-.75.75-.75h9c.414 0 .75.336.75.75V3" />
+                       </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">Persona Jurídica</h2>
+                    <p class="mt-2 text-gray-500">Empresas, corporaciones, fundaciones y otras entidades con NIT.</p>
                 </div>
             </div>
-            <div id="form-container" class="hidden"></div>
-        </main>
-    </div>
+        </div>
 
-    <!-- Banner de Cookies -->
-    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 shadow-lg z-50 transition-transform duration-500 translate-y-full">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between"><p class="text-sm text-gray-300 mb-4 md:mb-0">Este sitio web utiliza cookies para garantizar que obtenga la mejor experiencia. Al continuar navegando, acepta nuestro uso de cookies. <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="font-semibold text-white hover:underline ml-1">Más información</a>.</p><button onclick="acceptCookies()" class="bg-brand text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-blue-900 transition-colors">Aceptar</button></div>
+        <!-- Form Container (initially hidden) -->
+        <div id="form-container" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 hidden">
+            <!-- Dynamic form content will be injected here -->
+        </div>
+    </main>
+
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 flex items-center justify-between shadow-lg z-50 hidden">
+        <p class="text-sm">Utilizamos cookies para mejorar su experiencia. Al continuar navegando, usted acepta nuestra <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-gray-300">Política de Tratamiento de Datos</a>.</p>
+        <button id="accept-cookies" class="bg-white text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Aceptar</button>
     </div>
 
     <script>
-        // --- VARIABLES GLOBALES Y DATOS ---
-        let geodata = [];
-        let uploadedFiles = []; // Almacena los archivos seleccionados
-
-        // --- PLANTILLAS DE FORMULARIOS ---
-        const locationFields = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="pais" class="form-label">País</label>
-                    <select id="pais" name="pais" class="form-select" onchange="handleCountryChange(this.value)" required>
-                        <option value="">Seleccione...</option>
-                        <option value="Colombia">Colombia</option>
-                        <option value="Otro">Otro</option>
-                    </select>
+        // --- FORM TEMPLATES ---
+        const formPNaturalHTML = `
+            <div class="card p-8 sm:p-12">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#003366]">Formulario Persona Natural</h2>
+                        <p class="text-gray-600 mt-1">Por favor complete todos los campos requeridos.</p>
+                    </div>
+                    <button onclick="showSelection()" class="text-sm font-medium text-gray-500 hover:text-[#003366]">← Volver</button>
                 </div>
+                
+                <form id="form-natural" class="space-y-8">
+                    
+                    <!-- Section: Información General -->
+                    <div class="border-b border-gray-200 pb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">1. Información General</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nombreCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                                <input type="text" name="nombreCompleto" id="nombreCompleto" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento</label>
+                                <select name="tipoDocumento" id="tipoDocumento" class="input-field" required>
+                                    <option value="">Seleccione una opción...</option>
+                                    <option value="CC">Cédula de Ciudadanía</option>
+                                    <option value="CE">Cédula de Extranjería</option>
+                                    <option value="TI">Tarjeta de Identidad</option>
+                                    <option value="PA">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cedula" class="block text-sm font-medium text-gray-700 mb-1">Número de Documento</label>
+                                <input type="text" name="cedula" id="cedula" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                                <input type="email" name="email" id="email" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono / Celular</label>
+                                <input type="tel" name="telefono" id="telefono" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="pais" class="block text-sm font-medium text-gray-700 mb-1">País</label>
+                                <select name="pais" id="pais" class="input-field" required>
+                                    <option value="Colombia">Colombia</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div id="geo-colombia">
+                                <div>
+                                    <label for="departamento" class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+                                    <select name="departamento" id="departamento" class="input-field"></select>
+                                </div>
+                                <div class="mt-6">
+                                    <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-1">Ciudad / Municipio</label>
+                                    <select name="ciudad" id="ciudad" class="input-field"></select>
+                                </div>
+                            </div>
+                            <div id="geo-otro" class="hidden md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="paisManual" class="block text-sm font-medium text-gray-700 mb-1">Nombre del País</label>
+                                    <input type="text" name="paisManual" id="paisManual" class="input-field">
+                                </div>
+                                <div>
+                                    <label for="ciudadManual" class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Ciudad</label>
+                                    <input type="text" name="ciudadManual" id="ciudadManual" class="input-field">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Información Bancaria -->
+                    <div class="border-b border-gray-200 pb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">2. Información Bancaria</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="entidadBancaria" class="block text-sm font-medium text-gray-700 mb-1">Entidad Bancaria</label>
+                                <input type="text" name="entidadBancaria" id="entidadBancaria" class="input-field" required>
+                            </div>
+                             <div>
+                                <label for="tipoCuenta" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Cuenta</label>
+                                <select name="tipoCuenta" id="tipoCuenta" class="input-field" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Ahorros">Ahorros</option>
+                                    <option value="Corriente">Corriente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="numeroCuenta" class="block text-sm font-medium text-gray-700 mb-1">Número de Cuenta</label>
+                                <input type="text" name="numeroCuenta" id="numeroCuenta" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="titularCuenta" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Titular de la Cuenta</label>
+                                <input type="text" name="titularCuenta" id="titularCuenta" class="input-field" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section: Cargue de Documentos -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">3. Cargue de Documentos</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- Documento de Identidad -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Documento de Identidad</label>
+                                <label for="docIdentidad" class="file-input-wrapper">
+                                    <span class="file-name">Haz clic para seleccionar</span>
+                                    <input type="file" name="docIdentidad" id="docIdentidad" class="hidden" required accept=".pdf,.jpg,.jpeg,.png">
+                                </label>
+                            </div>
+                            
+                            <!-- RUT -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">RUT (Actualizado)</label>
+                                <label for="rutFile" class="file-input-wrapper">
+                                    <span class="file-name">Haz clic para seleccionar</span>
+                                    <input type="file" name="rutFile" id="rutFile" class="hidden" required accept=".pdf">
+                                </label>
+                            </div>
+
+                            <!-- Certificado Bancario -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Certificado Bancario</label>
+                                <label for="certBancario" class="file-input-wrapper">
+                                    <span class="file-name">Haz clic para seleccionar</span>
+                                    <input type="file" name="certBancario" id="certBancario" class="hidden" required accept=".pdf">
+                                </label>
+                            </div>
+                            
+                            <!-- Hoja de Vida -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hoja de Vida y Soportes</label>
+                                <label for="hojaVida" class="file-input-wrapper">
+                                    <span class="file-name">Haz clic para seleccionar</span>
+                                    <input type="file" name="hojaVida" id="hojaVida" class="hidden" accept=".pdf,.zip,.rar">
+                                </label>
+                            </div>
+                            
+                            <!-- Certificados Afiliación -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Certificados Afiliación (EPS y Pensión)</label>
+                                <label for="certAfiliacion" class="file-input-wrapper">
+                                    <span class="file-name">Haz clic para seleccionar</span>
+                                    <input type="file" name="certAfiliacion" id="certAfiliacion" class="hidden" accept=".pdf,.zip,.rar">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Consent & Submit -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <div class="flex items-start">
+                            <input id="consentimiento" name="consentimiento" type="checkbox" class="h-4 w-4 text-[#003366] focus:ring-[#002244] border-gray-300 rounded mt-1" required>
+                            <div class="ml-3 text-sm">
+                                <label for="consentimiento" class="font-medium text-gray-700">He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="underline text-[#003366] hover:text-[#002244]">política de tratamiento de datos personales</a> de la Fundación IDI.</label>
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" id="submit-button" class="btn-brand">
+                                <span id="submit-button-text">Enviar Información</span>
+                                <span id="submit-button-spinner" class="hidden">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                        <div id="form-message" class="mt-4 text-center"></div>
+                    </div>
+                </form>
             </div>
-            <div id="location-colombia" class="hidden grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div>
-                    <label for="departamento" class="form-label">Departamento</label>
-                    <select id="departamento" name="departamento" class="form-select" onchange="handleDepartmentChange(this.value)">
-                        <option value="">Seleccione un departamento...</option>
-                    </select>
+        `;
+        const formPJuridicaHTML = `
+            <div class="card p-8 sm:p-12">
+                <div class="flex items-center justify-between mb-8">
+                     <div>
+                        <h2 class="text-2xl font-bold text-[#003366]">Formulario Persona Jurídica</h2>
+                        <p class="text-gray-600 mt-1">Por favor complete todos los campos requeridos.</p>
+                    </div>
+                    <button onclick="showSelection()" class="text-sm font-medium text-gray-500 hover:text-[#003366]">← Volver</button>
                 </div>
-                <div>
-                    <label for="ciudad" class="form-label">Ciudad / Municipio</label>
-                    <select id="ciudad" name="ciudad" class="form-select" disabled>
-                        <option value="">Seleccione una ciudad...</option>
-                    </select>
-                </div>
+                <!-- Juridica form content here -->
+                 <p class="text-center text-gray-500 py-16">El formulario para Persona Jurídica se encuentra en construcción.</p>
             </div>
-            <div id="location-otro" class="hidden grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div>
-                    <label for="paisManual" class="form-label">País (Manual)</label>
-                    <input type="text" id="paisManual" name="paisManual" class="form-input">
-                </div>
-                <div>
-                    <label for="ciudadManual" class="form-label">Ciudad (Manual)</label>
-                    <input type="text" id="ciudadManual" name="ciudadManual" class="form-input">
-                </div>
-            </div>`;
-
-        const commonFormFields = `
-            <fieldset class="border-t border-gray-200 pt-6 mt-8"><legend class="text-lg font-semibold text-gray-700 px-2">Información Tributaria y Clasificación</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"><div><label for="tipoProveedor" class="form-label">Tipo de Proveedor</label><select id="tipoProveedor" name="tipoProveedor" class="form-select"><option>Bienes</option><option>Servicios</option><option>Obras</option><option>Otro</option></select></div><div><label for="regimenTributario" class="form-label">Régimen Tributario</label><select id="regimenTributario" name="regimenTributario" class="form-select"><option>No responsable de IVA</option><option>Responsable de IVA</option><option>Régimen Simple de Tributación</option><option>Gran Contribuyente</option></select></div><div><label for="actividadEconomica" class="form-label">Actividad Económica (CIIU)</label><input type="text" id="actividadEconomica" name="actividadEconomica" class="form-input" placeholder="Ej: 6201"></div><div><label class="form-label">¿Responsable de IVA?</label><div class="flex items-center space-x-4 mt-2"><label><input type="radio" name="responsableIva" value="si" class="mr-2"> Sí</label><label><input type="radio" name="responsableIva" value="no" class="mr-2"> No</label></div></div></div></fieldset>
-            <fieldset class="border-t border-gray-200 pt-6 mt-8"><legend class="text-lg font-semibold text-gray-700 px-2">Información Bancaria</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"><div><label for="entidadBancaria" class="form-label">Entidad Bancaria</label><input type="text" id="entidadBancaria" name="entidadBancaria" class="form-input" placeholder="Nombre del banco" required></div><div><label for="tipoCuenta" class="form-label">Tipo de Cuenta</label><select id="tipoCuenta" name="tipoCuenta" class="form-select"><option>Ahorros</option><option>Corriente</option></select></div><div><label for="numeroCuenta" class="form-label">Número de Cuenta</label><input type="text" id="numeroCuenta" name="numeroCuenta" class="form-input" placeholder="000-00000-0" required></div><div><label for="titularCuenta" class="form-label">Nombre del Titular de la Cuenta</label><input type="text" id="titularCuenta" name="titularCuenta" class="form-input" placeholder="Como aparece en el banco" required></div></div></fieldset>`;
-
-        const naturalPersonForm = `
-            <div class="text-center mb-8"><h2 class="text-2xl font-semibold text-gray-800">Formulario: Persona Natural</h2><p class="text-gray-600 mt-2">Por favor, complete todos los campos requeridos.</p></div>
-            <form id="data-form" data-type="natural">
-                <fieldset><legend class="text-lg font-semibold text-gray-700 px-2">Información General</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"><div><label for="nombreCompleto" class="form-label">Nombres y Apellidos Completos</label><input type="text" id="nombreCompleto" name="nombreCompleto" class="form-input" required></div><div><label for="cedula" class="form-label">Cédula de Ciudadanía (C.C)</label><input type="text" id="cedula" name="cedula" class="form-input" required></div><div class="md:col-span-2"><label for="direccion" class="form-label">Dirección de Residencia</label><input type="text" id="direccion" name="direccion" class="form-input" required></div><div class="md:col-span-2">${locationFields}</div><div><label for="telefono" class="form-label">Teléfono / Celular</label><input type="tel" id="telefono" name="telefono" class="form-input" required></div><div class="md:col-span-2"><label for="email" class="form-label">Correo Electrónico</label><input type="email" id="email" name="email" class="form-input" required></div></div></fieldset>
-                ${commonFormFields}
-                <fieldset class="border-t border-gray-200 pt-6 mt-8"><legend class="text-lg font-semibold text-gray-700 px-2">Cargue de Documentos</legend><div class="space-y-4 mt-4 text-sm text-gray-600"><p>Por favor, anexe los siguientes documentos en formato PDF.</p><ul class="list-disc list-inside space-y-2"><li>Cédula de Ciudadanía</li><li>RUT (Actualizado)</li><li>Certificación Bancaria (No mayor a 30 días)</li><li>Hoja de vida y Soportes (Si aplica)</li><li>Certificados de afiliación a EPS y Fondo de Pensiones (Si aplica)</li></ul><div id="file-upload-area"></div></div></fieldset>
-                 <div class="mt-10 pt-6 border-t border-gray-200"><div class="flex items-start"><input id="auth-datos" type="checkbox" class="h-4 w-4 text-brand border-gray-300 rounded mt-1" required><label for="auth-datos" class="ml-3 text-sm text-gray-600">He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a>.</label></div><div class="flex justify-between items-center mt-8"><button type="button" onclick="goBack()" class="text-sm text-gray-500 hover:text-brand">&larr; Volver</button><button type="submit" class="btn-brand">
-                    <span class="btn-text">Enviar Información</span>
-                    <span class="loader hidden"></span>
-                 </button></div></div></form>`;
+        `;
         
-        const juridicalPersonForm = `
-            <div class="text-center mb-8"><h2 class="text-2xl font-semibold text-gray-800">Formulario: Persona Jurídica</h2><p class="text-gray-600 mt-2">Por favor, complete todos los campos requeridos.</p></div>
-            <form id="data-form" data-type="juridica">
-                <fieldset><legend class="text-lg font-semibold text-gray-700 px-2">Información General de la Empresa</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"><div><label for="razonSocial" class="form-label">Razón Social</label><input type="text" id="razonSocial" name="razonSocial" class="form-input" required></div><div><label for="nit" class="form-label">NIT (Sin dígito de verificación)</label><input type="text" id="nit" name="nit" class="form-input" required></div><div class="md:col-span-2"><label for="direccionEmpresa" class="form-label">Dirección</label><input type="text" id="direccionEmpresa" name="direccionEmpresa" class="form-input" required></div><div class="md:col-span-2">${locationFields}</div><div><label for="telefonoEmpresa" class="form-label">Teléfono</label><input type="tel" id="telefonoEmpresa" name="telefonoEmpresa" class="form-input" required></div><div class="md:col-span-2"><label for="emailEmpresa" class="form-label">Correo Electrónico para Notificaciones</label><input type="email" id="emailEmpresa" name="emailEmpresa" class="form-input" required></div></div></fieldset>
-                <fieldset class="border-t border-gray-200 pt-6 mt-8"><legend class="text-lg font-semibold text-gray-700 px-2">Información del Representante Legal</legend><div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"><div><label for="repLegalNombre" class="form-label">Nombres y Apellidos</label><input type="text" id="repLegalNombre" name="repLegalNombre" class="form-input" required></div><div><label for="repLegalCedula" class="form-label">Cédula de Ciudadanía (C.C)</label><input type="text" id="repLegalCedula" name="repLegalCedula" class="form-input" required></div></div></fieldset>
-                ${commonFormFields}
-                <fieldset class="border-t border-gray-200 pt-6 mt-8"><legend class="text-lg font-semibold text-gray-700 px-2">Cargue de Documentos</legend><div class="space-y-4 mt-4 text-sm text-gray-600"><p>Por favor, anexe los siguientes documentos en formato PDF.</p><ul class="list-disc list-inside space-y-2"><li>Cámara de Comercio (No mayor a 30 días)</li><li>RUT (Actualizado)</li><li>Cédula del Representante Legal</li><li>Certificación Bancaria (No mayor a 30 días)</li><li>Certificado de estándares mínimos SST</li></ul><div id="file-upload-area"></div></div></fieldset>
-                <div class="mt-10 pt-6 border-t border-gray-200"><div class="flex items-start"><input id="auth-datos" type="checkbox" class="h-4 w-4 text-brand border-gray-300 rounded mt-1" required><label for="auth-datos" class="ml-3 text-sm text-gray-600">He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline">Política de Tratamiento de Datos Personales</a>.</label></div><div class="flex justify-between items-center mt-8"><button type="button" onclick="goBack()" class="text-sm text-gray-500 hover:text-brand">&larr; Volver</button><button type="submit" class="btn-brand">
-                    <span class="btn-text">Enviar Información</span>
-                    <span class="loader hidden"></span>
-                </button></div></div></form>`;
-
-        // --- LÓGICA DE LA APLICACIÓN ---
-
+        let geodata;
+        
+        // --- EVENT LISTENERS & LOGIC ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // Cargar datos geográficos
+            // Cookie Banner Logic
+            if (!localStorage.getItem('cookiesAccepted')) {
+                document.getElementById('cookie-banner').classList.remove('hidden');
+            }
+            document.getElementById('accept-cookies').addEventListener('click', () => {
+                localStorage.setItem('cookiesAccepted', 'true');
+                document.getElementById('cookie-banner').classList.add('hidden');
+            });
+            
+            // Load Geodata
             try {
-                const response = await fetch('geodata.json');
+                const response = await fetch('./geodata.json');
+                if (!response.ok) throw new Error('Network response was not ok');
                 geodata = await response.json();
             } catch (error) {
-                console.error('Error fetching geodata:', error);
-                // Opcional: mostrar un error al usuario
-            }
-
-            // Lógica del banner de cookies
-            const cookieBanner = document.getElementById('cookie-banner');
-            if (!localStorage.getItem('cookie_consent')) {
-                cookieBanner.classList.remove('hidden');
-                setTimeout(() => cookieBanner.classList.remove('translate-y-full'), 100);
+                console.error('Could not load geodata:', error);
             }
         });
+        
+        function selectType(type) {
+            const container = document.getElementById('form-container');
+            const selectionContainer = document.getElementById('selection-container');
+            document.getElementById('card-natural').classList.remove('selected');
+            document.getElementById('card-juridica').classList.remove('selected');
 
-        function showForm(type) {
-            const selectionStep = document.getElementById('selection-step');
-            const formContainer = document.getElementById('form-container');
-            
-            formContainer.innerHTML = type === 'natural' ? naturalPersonForm : juridicalPersonForm;
+            if (type === 'natural') {
+                document.getElementById('card-natural').classList.add('selected');
+                container.innerHTML = formPNaturalHTML;
+                attachNaturalFormListeners();
+            } else if (type === 'juridica') {
+                document.getElementById('card-juridica').classList.add('selected');
+                container.innerHTML = formPJuridicaHTML;
+            }
+            selectionContainer.classList.add('hidden');
+            container.classList.remove('hidden');
+        }
 
-            // Ocultar selección y mostrar formulario con animación
-            selectionStep.classList.add('transition-opacity', 'duration-300', 'opacity-0');
-            setTimeout(() => {
-                selectionStep.classList.add('hidden');
-                formContainer.classList.remove('hidden');
-                formContainer.classList.add('opacity-0');
-                setTimeout(() => formContainer.classList.remove('opacity-0'), 50);
-                
-                // Inicializar componentes
-                document.getElementById('file-upload-area').innerHTML = createFileUploader();
-                attachFormSubmitListener();
-                populateDepartments();
-            }, 300);
+        function showSelection() {
+            document.getElementById('selection-container').classList.remove('hidden');
+            document.getElementById('form-container').classList.add('hidden');
         }
         
-        function goBack() {
-            const selectionStep = document.getElementById('selection-step');
-            const formContainer = document.getElementById('form-container');
-            document.getElementById('response-message').innerHTML = ''; // Limpiar mensajes
-
-            formContainer.classList.add('transition-opacity', 'duration-300', 'opacity-0');
-            setTimeout(() => {
-                formContainer.classList.add('hidden');
-                selectionStep.classList.remove('hidden', 'opacity-0');
-            }, 300);
-        }
-
-        function createFileUploader() {
-            return `<div class="file-uploader mt-4" onclick="document.getElementById('file-input').click()"><input type="file" id="file-input" multiple class="hidden" onchange="handleFiles(this.files)"><div class="text-gray-500"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-2 text-gray-400"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg><p class="font-semibold">Haz clic para subir archivos</p><p class="text-xs">O arrástralos aquí (PDF, JPG, etc.)</p></div></div><div id="file-list" class="mt-4 space-y-2"></div>`;
-        }
-
-        function handleFiles(files) {
-            const fileListContainer = document.getElementById('file-list');
-            fileListContainer.innerHTML = ''; // Limpiar lista visual
-            uploadedFiles = Array.from(files); // Almacenar archivos en la variable global
-
-            uploadedFiles.forEach(file => {
-                const fileElement = document.createElement('div');
-                fileElement.className = 'flex items-center justify-between bg-gray-100 p-2 rounded-lg text-sm';
-                fileElement.innerHTML = `<span class="truncate">${file.name}</span><span class="text-gray-500 text-xs ml-4">${(file.size / 1024).toFixed(1)} KB</span>`;
-                fileListContainer.appendChild(fileElement);
-            });
-        }
-
-        // --- LÓGICA DE GEOLOCALIZACIÓN DINÁMICA ---
-        function handleCountryChange(country) {
-            const colombiaDiv = document.getElementById('location-colombia');
-            const otroDiv = document.getElementById('location-otro');
-            if (country === 'Colombia') {
-                colombiaDiv.style.display = 'grid';
-                otroDiv.style.display = 'none';
-            } else if (country === 'Otro') {
-                colombiaDiv.style.display = 'none';
-                otroDiv.style.display = 'grid';
-            } else {
-                colombiaDiv.style.display = 'none';
-                otroDiv.style.display = 'none';
-            }
-        }
-
-        function populateDepartments() {
-            const depSelect = document.getElementById('departamento');
-            if (!depSelect || geodata.length === 0) return;
-            geodata.forEach(dep => {
+        function populateDepartamentos() {
+            const deptoSelect = document.getElementById('departamento');
+            deptoSelect.innerHTML = '<option value="">Seleccione Departamento...</option>';
+            if (!geodata) return;
+            geodata.forEach(depto => {
                 const option = document.createElement('option');
-                option.value = dep.departamento;
-                option.textContent = dep.departamento;
-                depSelect.appendChild(option);
+                option.value = depto.departamento;
+                option.textContent = depto.departamento;
+                deptoSelect.appendChild(option);
             });
         }
-
-        function handleDepartmentChange(departmentName) {
-            const citySelect = document.getElementById('ciudad');
-            citySelect.innerHTML = '<option value="">Seleccione una ciudad...</option>'; // Limpiar
-            citySelect.disabled = true;
-
-            if (departmentName) {
-                const selectedDep = geodata.find(dep => dep.departamento === departmentName);
-                if (selectedDep) {
-                    selectedDep.ciudades.forEach(city => {
-                        const option = document.createElement('option');
-                        option.value = city;
-                        option.textContent = city;
-                        citySelect.appendChild(option);
-                    });
-                    citySelect.disabled = false;
-                }
-            }
-        }
-
-        // --- LÓGICA DE ENVÍO Y VALIDACIÓN DE FORMULARIO ---
-        function attachFormSubmitListener() {
-            const form = document.getElementById('data-form');
-            if (form) {
-                form.addEventListener('submit', handleSubmit);
-            }
-        }
-
-        async function handleSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
-            const submitButton = form.querySelector('button[type="submit"]');
-            const btnText = submitButton.querySelector('.btn-text');
-            const loader = submitButton.querySelector('.loader');
-
-            // Limpiar mensajes anteriores y validaciones
-            document.getElementById('response-message').innerHTML = '';
-            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-
-            // Validar campos
-            let isValid = true;
-            const requiredFields = form.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                if ((field.type === 'checkbox' && !field.checked) || (field.type !== 'checkbox' && !field.value.trim())) {
-                    isValid = false;
-                    field.classList.add('is-invalid');
-                }
-            });
-
-            if (!isValid) {
-                displayMessage('Por favor, complete todos los campos obligatorios.', 'error');
-                return;
-            }
-            
-            // Mostrar loading y deshabilitar botón
-            btnText.classList.add('hidden');
-            loader.classList.remove('hidden');
-            submitButton.disabled = true;
-
-            // Construir FormData
-            const formData = new FormData(form);
-            uploadedFiles.forEach((file, index) => {
-                formData.append(`file${index}`, file);
-            });
-            formData.append('fileCount', uploadedFiles.length);
-
-            const formType = form.dataset.type;
-            const endpoint = formType === 'natural' ? '/api/save-pnatural' : '/api/save-pjuridica';
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData // No se necesita 'Content-Type', el navegador lo establece por nosotros con FormData
+        
+        function populateCiudades(departamento) {
+            const ciudadSelect = document.getElementById('ciudad');
+            ciudadSelect.innerHTML = '<option value="">Seleccione Ciudad...</option>';
+            if (!geodata) return;
+            const selectedDepto = geodata.find(d => d.departamento === departamento);
+            if (selectedDepto) {
+                selectedDepto.ciudades.forEach(ciudad => {
+                    const option = document.createElement('option');
+                    option.value = ciudad;
+                    option.textContent = ciudad;
+                    ciudadSelect.appendChild(option);
                 });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    displayMessage('¡Información enviada con éxito! Gracias por registrarse.', 'success');
-                    form.reset();
-                    document.getElementById('file-list').innerHTML = '';
-                    uploadedFiles = [];
-                    goBack(); // Opcional: volver a la pantalla de selección
-                } else {
-                    throw new Error(result.message || 'Ocurrió un error en el servidor.');
-                }
-            } catch (error) {
-                displayMessage(`Error al enviar el formulario: ${error.message}`, 'error');
-            } finally {
-                // Restaurar botón
-                btnText.classList.remove('hidden');
-                loader.classList.add('hidden');
-                submitButton.disabled = false;
             }
         }
-
-        function displayMessage(message, type) {
-            const messageContainer = document.getElementById('response-message');
-            const bgColor = type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700';
-            messageContainer.innerHTML = `<div class="${bgColor} border px-4 py-3 rounded-lg relative" role="alert"><span class="block sm:inline">${message}</span></div>`;
-            window.scrollTo(0, 0); // Ir al inicio para ver el mensaje
+        
+        function handleFileInputChange(event) {
+            const input = event.target;
+            const wrapper = input.parentElement;
+            const fileNameSpan = wrapper.querySelector('.file-name');
+            if (input.files.length > 0) {
+                fileNameSpan.textContent = input.files[0].name;
+                wrapper.classList.add('file-loaded');
+            } else {
+                fileNameSpan.textContent = 'Haz clic para seleccionar';
+                wrapper.classList.remove('file-loaded');
+            }
         }
+        
+        function attachNaturalFormListeners() {
+            const form = document.getElementById('form-natural');
+            if (!form) return;
 
-        // --- LÓGICA DE COOKIES ---
-        function acceptCookies() {
-            localStorage.setItem('cookie_consent', 'true');
-            const cookieBanner = document.getElementById('cookie-banner');
-            cookieBanner.classList.add('translate-y-full');
-            setTimeout(() => cookieBanner.classList.add('hidden'), 500);
+            // Geo Logic
+            const paisSelect = document.getElementById('pais');
+            const geoColombiaDiv = document.getElementById('geo-colombia');
+            const geoOtroDiv = document.getElementById('geo-otro');
+            const deptoSelect = document.getElementById('departamento');
+
+            populateDepartamentos();
+            
+            paisSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'Colombia') {
+                    geoColombiaDiv.classList.remove('hidden');
+                    geoOtroDiv.classList.add('hidden');
+                } else {
+                    geoColombiaDiv.classList.add('hidden');
+                    geoOtroDiv.classList.remove('hidden');
+                }
+            });
+            
+            deptoSelect.addEventListener('change', (e) => {
+                populateCiudades(e.target.value);
+            });
+            
+            // File Input Logic
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', handleFileInputChange);
+            });
+
+            // Form Submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitButton = document.getElementById('submit-button');
+                const buttonText = document.getElementById('submit-button-text');
+                const buttonSpinner = document.getElementById('submit-button-spinner');
+                const messageDiv = document.getElementById('form-message');
+
+                submitButton.disabled = true;
+                buttonText.classList.add('hidden');
+                buttonSpinner.classList.remove('hidden');
+                messageDiv.innerHTML = '';
+
+                const formData = new FormData(form);
+                const endpoint = '/api/save-pnatural';
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Ocurrió un error.');
+                    }
+                    
+                    messageDiv.innerHTML = `<p class="text-green-600 font-semibold">¡Información enviada con éxito! Gracias por registrarse.</p>`;
+                    form.reset();
+                    document.querySelectorAll('.file-input-wrapper').forEach(w => w.classList.remove('file-loaded'));
+                    document.querySelectorAll('.file-name').forEach(s => s.textContent = 'Haz clic para seleccionar');
+
+
+                } catch (error) {
+                    messageDiv.innerHTML = `<p class="text-red-600 font-semibold">Error: ${error.message}</p>`;
+                } finally {
+                    submitButton.disabled = false;
+                    buttonText.classList.remove('hidden');
+                    buttonSpinner.classList.add('hidden');
+                }
+            });
         }
     </script>
 </body>
