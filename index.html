@@ -1,206 +1,564 @@
-<!-- Tu archivo index.html literal como me lo enviaste -->
-
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Portal de Proveedores - Fundación IDI</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  /* aquí va TODO tu CSS original tal cual */
-  body {
-    font-family: Poppins, sans-serif;
-    background-color: #f8f7f2;
-    color: #4a4a4a;
-  }
-  .btn-brand {
-    background-color: #003366;
-    color: white;
-    padding: 16px 32px;
-    border-radius: 9999px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-  .btn-brand:hover {
-    background-color: #002244;
-    transform: translateY(-2px);
-    box-shadow: 0 7px 14px rgba(0,0,0,0.1);
-  }
-  .card {
-    background-color: white;
-    border-radius: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    transition: all 0.3s ease-in-out;
-  }
-  .card-option {
-    cursor: pointer;
-    border: 2px solid transparent;
-  }
-  .card-option:hover {
-    transform: translateY(-5px);
-    border-color: #003366;
-    box-shadow: 0 15px 30px rgba(0,51,102,0.1);
-  }
-  .file-drop-zone {
-    border: 2px dashed #d1d5db;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-  }
-  .file-drop-zone.dragover {
-    background-color: #ebf8ff;
-    border-color: #003366;
-  }
-  .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #003366;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Proveedores - Fundación IDI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F8F7F2; color: #4A4A4A; }
+        .btn-brand { background-color: #003366; color: white; padding: 16px 32px; border-radius: 9999px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .btn-brand:hover { background-color: #002244; transform: translateY(-2px); box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1); }
+        .card { background-color: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); transition: all 0.3s ease-in-out; }
+        .card-option { cursor: pointer; border: 2px solid transparent; }
+        .card-option:hover { transform: translateY(-5px); border-color: #003366; box-shadow: 0 15px 30px rgba(0, 51, 102, 0.1); }
+        .input-field { border: 1px solid #D1D5DB; border-radius: 8px; padding: 12px; width: 100%; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-field:focus { border-color: #003366; box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.2); outline: none; }
+        .file-drop-zone { border: 2px dashed #D1D5DB; border-radius: 12px; padding: 2rem; text-align: center; transition: background-color 0.2s, border-color 0.2s; }
+        .file-drop-zone.dragover { background-color: #EBF8FF; border-color: #003366; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #003366; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #captchaCanvas { border: 1px solid #d1d5db; border-radius: 8px; background-color: #f9fafb; cursor: pointer;}
+    </style>
 </head>
 <body class="antialiased">
 
-<header class="bg-white py-6 shadow-sm">
-  <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
-    <img src="logoprincipal.png" alt="Logo Fundación IDI" class="h-12" />
-  </div>
-</header>
+    <header class="bg-white py-6 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <img src="logoprincipal.png" alt="Logo Fundación IDI" class="h-12">
+        </div>
+    </header>
 
-<main class="py-12 sm:py-20">
-  <div id="selection-container" class="text-center">
-    <h1 class="text-4xl sm:text-5xl font-bold text-[#003366] tracking-tight">Portal de Registro de Proveedores</h1>
-    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-      Bienvenido. Para iniciar su proceso de inscripción o actualización de datos, por favor seleccione el tipo de proveedor que corresponde.
-    </p>
+    <main class="py-12 sm:py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div id="selection-container" class="text-center">
+                <h1 class="text-4xl sm:text-5xl font-bold text-[#003366] tracking-tight">Portal de Registro de Proveedores</h1>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Bienvenido. Para iniciar su proceso de inscripción o actualización de datos, por favor seleccione el tipo de proveedor que corresponde.</p>
+                
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                    <!-- Opción Persona Natural -->
+                    <div id="select-natural" class="card card-option p-8 text-center">
+                        <svg class="h-20 w-20 text-[#003366] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        <h2 class="mt-6 text-2xl font-bold text-gray-800">Persona Natural</h2>
+                        <p class="mt-2 text-gray-500">Profesionales independientes, contratistas y personas que actúan a título personal.</p>
+                    </div>
 
-    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-      <div id="select-natural" class="card card-option p-8 text-center cursor-pointer">
-        <h2 class="mt-6 text-2xl font-bold text-gray-800">Persona Natural</h2>
-        <p class="mt-2 text-gray-500">Profesionales independientes o contratistas.</p>
-      </div>
+                    <!-- Opción Persona Jurídica -->
+                    <div id="select-juridica" class="card card-option p-8 text-center">
+                        <svg class="h-20 w-20 text-[#003366] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6M9 11.25h6m-6 4.5h6M6.75 21v-2.25a2.25 2.25 0 012.25-2.25h6a2.25 2.25 0 012.25 2.25V21" />
+                        </svg>
+                        <h2 class="mt-6 text-2xl font-bold text-gray-800">Persona Jurídica</h2>
+                        <p class="mt-2 text-gray-500">Empresas, organizaciones y entidades legalmente constituidas.</p>
+                    </div>
+                </div>
+            </div>
 
-      <div id="select-juridica" class="card card-option p-8 text-center cursor-pointer">
-        <h2 class="mt-6 text-2xl font-bold text-gray-800">Persona Jurídica</h2>
-        <p class="mt-2 text-gray-500">Empresas y entidades legalmente constituidas.</p>
-      </div>
+            <div id="form-container" class="mt-16 hidden">
+                <!-- El formulario se inyectará aquí -->
+            </div>
+
+        </div>
+    </main>
+    
+    <footer class="bg-white mt-20 border-t">
+        <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; <span id="currentYear"></span> Fundación IDI. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 shadow-lg z-50 hidden">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-sm">Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, acepta nuestro uso de cookies. <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-gray-300">Leer más</a>.</p>
+            <button id="accept-cookies" class="bg-white text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">Aceptar</button>
+        </div>
     </div>
-  </div>
+    
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        let geoData = {};
+        let captchaSolution = 0;
 
-  <div id="form-container" class="mt-16 hidden"></div>
-</main>
-
-<footer class="bg-white mt-20 border-t text-center text-gray-500 py-6">
-  <p>&copy; <span id="currentYear"></span> Fundación IDI. Todos los derechos reservados.</p>
-</footer>
-
-<script>
-  document.getElementById("currentYear").textContent = new Date().getFullYear();
-
-  let geoData = {};
-  let captchaSolution = 0;
-
-  // Cambiado para conectar geodata.json correctamente
-  async function loadGeoData() {
-    try {
-      const response = await fetch("./geodata.json"); // ruta relativa correcta
-      if (!response.ok) throw new Error(`Error al cargar geodata.json: ${response.status}`);
-      geoData = await response.json();
-      console.log("geodata.json cargado correctamente");
-    } catch (error) {
-      console.error("Error crítico al cargar geodata.json:", error);
-      geoData = { departamentos: [] };
-    }
-    return geoData;
+        // Cargar los datos geográficos una sola vez
+       async function loadGeoData() {
+  try {
+    const response = await fetch(".geodata.json");
+    if (!response.ok) throw new Error("Error al cargar geodata.json");
+    geoData = await response.json();
+  } catch (error) {
+    console.error("Error al cargar geodata.json", error);
+    geoData = { departamentos: [] };
   }
+  return geoData;
+}
+const geoDataPromise = loadGeoData();
 
-  const geoDataPromise = loadGeoData();
 
-  const selectionContainer = document.getElementById("selection-container");
-  const formContainer = document.getElementById("form-container");
-  const selectNatural = document.getElementById("select-natural");
-  const selectJuridica = document.getElementById("select-juridica");
 
-  async function showForm(formHTML) {
-    selectionContainer.classList.add("hidden");
-    formContainer.innerHTML = formHTML;
-    formContainer.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+        // Lógica de Selección y carga de formularios
+        const selectionContainer = document.getElementById('selection-container');
+        const formContainer = document.getElementById('form-container');
+        const selectNatural = document.getElementById('select-natural');
+        const selectJuridica = document.getElementById('select-juridica');
 
-    await geoDataPromise;
-    setupGeoFields();
-  }
+        // Contenido HTML de los formularios
+        const naturalFormHTML = `
+            <div class="card p-8 sm:p-12">
+                <div class="flex items-center gap-4 mb-8">
+                     <svg class="h-12 w-12 text-[#003366]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Formulario Persona Natural</h2>
+                        <p class="text-gray-500">Por favor complete todos los campos requeridos.</p>
+                    </div>
+                </div>
+                
+                <form id="natural-form" novalidate>
+                    <!-- Sección de Información General -->
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <h3 class="text-xl font-semibold text-[#003366] mb-6">Información General</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nombreCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo *</label>
+                                <input type="text" id="nombreCompleto" name="nombreCompleto" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="tipoDocumento" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento *</label>
+                                <select id="tipoDocumento" name="tipoDocumento" class="input-field" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                                    <option value="Cédula de Extranjería">Cédula de Extranjería</option>
+                                    <option value="Tarjeta de Identidad">Tarjeta de Identidad</option>
+                                    <option value="Pasaporte">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="cedula" class="block text-sm font-medium text-gray-700 mb-1">Número de Documento *</label>
+                                <input type="text" id="cedula" name="cedula" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico *</label>
+                                <input type="email" id="email" name="email" class="input-field" required>
+                            </div>
+                            <div>
+                                <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono / Celular *</label>
+                                <input type="tel" id="telefono" name="telefono" class="input-field" required>
+                            </div>
+                             <div>
+                                <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1">Dirección (Calle, número, barrio) *</label>
+                                <input type="text" id="direccion" name="direccion" class="input-field" required>
+                            </div>
+                            <!-- CAMPOS DE GEOLOCALIZACIÓN -->
+                            <div class="md:col-span-2">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label for="pais" class="block text-sm font-medium text-gray-700 mb-1">País *</label>
+                                        <select id="pais" name="pais" class="input-field" required>
+                                            <option value="Colombia">Colombia</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div id="geo-colombia" class="md:col-span-2">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="departamento" class="block text-sm font-medium text-gray-700 mb-1">Departamento *</label>
+                                                <select id="departamento" name="departamento" class="input-field"></select>
+                                            </div>
+                                            <div>
+                                                <label for="ciudad" class="block text-sm font-medium text-gray-700 mb-1">Ciudad / Municipio *</label>
+                                                <select id="ciudad" name="ciudad" class="input-field"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="geo-otro" class="hidden md:col-span-2">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="paisManual" class="block text-sm font-medium text-gray-700 mb-1">País (Manual) *</label>
+                                                <input type="text" id="paisManual" name="paisManual" class="input-field">
+                                            </div>
+                                            <div>
+                                                <label for="ciudadManual" class="block text-sm font-medium text-gray-700 mb-1">Ciudad (Manual) *</label>
+                                                <input type="text" id="ciudadManual" name="ciudadManual" class="input-field">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-  function setupGeoFields() {
-    const paisSelect = document.getElementById("pais");
-    const departamentoSelect = document.getElementById("departamento");
-    const ciudadSelect = document.getElementById("ciudad");
+                    <!-- Sección Bancaria -->
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <h3 class="text-xl font-semibold text-[#003366] mb-6">Información Bancaria</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div>
+                                <label for="entidadBancaria" class="block text-sm font-medium text-gray-700 mb-1">Entidad Bancaria *</label>
+                                <input type="text" id="entidadBancaria" name="entidadBancaria" class="input-field" required>
+                            </div>
+                             <div>
+                                <label for="tipoCuenta" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Cuenta *</label>
+                                <select id="tipoCuenta" name="tipoCuenta" class="input-field" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Ahorros">Ahorros</option>
+                                    <option value="Corriente">Corriente</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="numeroCuenta" class="block text-sm font-medium text-gray-700 mb-1">Número de Cuenta *</label>
+                                <input type="text" id="numeroCuenta" name="numeroCuenta" class="input-field" required>
+                            </div>
+                        </div>
+                    </div>
 
-    departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
-    if (!geoData.departamentos) return;
+                    <!-- Sección de Carga de Documentos -->
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <h3 class="text-xl font-semibold text-[#003366] mb-6">Cargue de Documentos</h3>
+                        <p class="text-gray-500 mb-6">Adjunte los siguientes documentos en formato PDF <strong>(Sin contraseñas)</strong>. Puede hacer clic o arrastrar los archivos a las cajas correspondientes.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                            
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Documento de Identidad (PDF) *</label>
+                                <div id="drop-zone-docIdentidad" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="docIdentidad" class="hidden file-input" accept=".pdf" required>
+                                </div>
+                            </div>
+                            
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">RUT (PDF, actualizado) *</label>
+                                <div id="drop-zone-rutFile" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="rutFile" class="hidden file-input" accept=".pdf" required>
+                                </div>
+                            </div>
+                            
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Certificado Bancario (PDF) *</label>
+                                <div id="drop-zone-certBancario" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="certBancario" class="hidden file-input" accept=".pdf" required>
+                                </div>
+                            </div>
+                            
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Hoja de Vida (PDF, opcional)</label>
+                                <div id="drop-zone-hojaVida" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="hojaVida" class="hidden file-input" accept=".pdf">
+                                </div>
+                            </div>
 
-    geoData.departamentos.forEach((d) => {
-      const option = document.createElement("option");
-      option.value = d.departamento;
-      option.textContent = d.departamento;
-      departamentoSelect.appendChild(option);
-    });
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Certificado Afiliación EPS (PDF)</label>
+                                <div id="drop-zone-certEPS" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="certEPS" class="hidden file-input" accept=".pdf">
+                                </div>
+                            </div>
 
-    departamentoSelect.addEventListener("change", () => {
-      const depto = geoData.departamentos.find(
-        (dd) => dd.departamento === departamentoSelect.value
-      );
-      ciudadSelect.innerHTML = '<option value="">Seleccione...</option>';
-      if (depto) {
-        depto.ciudades.forEach((c) => {
-          const option = document.createElement("option");
-          option.value = c;
-          option.textContent = c;
-          ciudadSelect.appendChild(option);
+                            <div class="file-drop-container">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Certificado Afiliación Pensión (PDF)</label>
+                                <div id="drop-zone-certPension" class="file-drop-zone">
+                                    <p class="file-drop-message">Arrastre o haga clic para subir</p>
+                                    <input type="file" name="certPension" class="hidden file-input" accept=".pdf">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <!-- Sección CAPTCHA -->
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <h3 class="text-xl font-semibold text-[#003366] mb-6">Verificación de Seguridad</h3>
+                        <div class="flex flex-col sm:flex-row items-center gap-6 p-4 bg-gray-50 rounded-lg">
+                            <div class="relative">
+                                <canvas id="captchaCanvas" width="200" height="50" title="Haga clic para generar una nueva operación"></canvas>
+                                <button type="button" id="reload-captcha" class="absolute top-1 right-1 p-1 text-gray-500 hover:text-gray-800" title="Generar nueva operación">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex-1 w-full">
+                                <label for="captchaInput" class="block text-sm font-medium text-gray-700 mb-1">Resuelva la operación para continuar *</label>
+                                <input type="text" id="captchaInput" name="captchaInput" class="input-field" required autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consentimiento y Envío -->
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <div class="flex items-start">
+                            <input id="consentimiento" name="consentimiento" type="checkbox" class="h-4 w-4 text-[#003366] focus:ring-[#002244] border-gray-300 rounded mt-1" required>
+                            <div class="ml-3 text-sm">
+                                <label for="consentimiento" class="font-medium text-gray-700">He leído y acepto la <a href="https://fundacionidi.edu.co/politica-de-tratamiento-de-datos/" target="_blank" rel="noopener noreferrer" class="text-[#003366] hover:underline">política de tratamiento de datos</a> de la Fundación IDI. *</label>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" id="submit-button" class="btn-brand flex items-center justify-center min-w-[150px]">
+                                <span class="btn-text">Enviar Información</span>
+                                <span class="loader hidden"></span>
+                            </button>
+                        </div>
+                        <div id="form-message" class="mt-4 text-center"></div>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        const juridicaFormHTML = `<!-- Formulario para Persona Jurídica será construido aquí -->`;
+
+        const showForm = async (formHTML) => {
+            selectionContainer.classList.add('hidden');
+            formContainer.innerHTML = formHTML;
+            formContainer.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (formHTML === naturalFormHTML) {
+                // Esperamos a que la carga del JSON termine (éxito o fracaso)
+               await geoDataPromise;
+              setupGeoFields();
+
+                
+                const form = document.getElementById('natural-form');
+                form.addEventListener('submit', handleFormSubmit);
+                setupDragAndDrop();
+                setupGeoFields(); // Esta función ahora se ejecuta con la certeza de que loadGeoData ha terminado
+                setupCaptcha();
+                document.getElementById('reload-captcha').addEventListener('click', setupCaptcha);
+                document.getElementById('captchaCanvas').addEventListener('click', setupCaptcha);
+            }
+        };
+
+        selectNatural.addEventListener('click', () => showForm(naturalFormHTML));
+        selectJuridica.addEventListener('click', () => showForm(juridicaFormHTML));
+        
+        // Lógica de Banner de Cookies
+        const cookieBanner = document.getElementById('cookie-banner');
+        const acceptCookiesBtn = document.getElementById('accept-cookies');
+
+        if (!localStorage.getItem('cookiesAccepted')) {
+            cookieBanner.classList.remove('hidden');
+        }
+
+        acceptCookiesBtn.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieBanner.classList.add('hidden');
         });
-      }
-    });
-  }
+        
+        // Lógica del CAPTCHA
+        function setupCaptcha() {
+            const canvas = document.getElementById('captchaCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const fonts = ['Poppins', 'Arial', 'Courier New', 'Georgia'];
+            
+            const num1 = Math.ceil(Math.random() * 9) + 1;
+            const num2 = Math.ceil(Math.random() * 9);
+            const operators = ['+', '-', 'x'];
+            const operator = operators[Math.floor(Math.random() * operators.length)];
 
-  selectNatural.addEventListener("click", () => {
-    showForm(`
-      <div class="card p-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Formulario Persona Natural</h2>
-        <form id="natural-form" novalidate>
-          <label class="block text-gray-700 font-medium mb-1" for="pais">País</label>
-          <select id="pais" class="input-field">
-            <option value="Colombia">Colombia</option>
-            <option value="Otro">Otro</option>
-          </select>
+            let question = `${num1} ${operator} ${num2}`;
+            
+            switch(operator) {
+                case '+': captchaSolution = num1 + num2; break;
+                case '-': captchaSolution = num1 - num2; break;
+                case 'x': captchaSolution = num1 * num2; break;
+            }
 
-          <label class="block text-gray-700 font-medium mt-4 mb-1" for="departamento">Departamento</label>
-          <select id="departamento" class="input-field"></select>
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f9fafb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          <label class="block text-gray-700 font-medium mt-4 mb-1" for="ciudad">Ciudad</label>
-          <select id="ciudad" class="input-field"></select>
-        </form>
-      </div>
-    `);
-  });
+            for (let i = 0; i < question.length; i++) {
+                ctx.save();
+                ctx.font = `${Math.random() * 12 + 28}px ${fonts[Math.floor(Math.random() * fonts.length)]}`;
+                ctx.fillStyle = `rgb(${Math.random()*120}, ${Math.random()*120}, ${Math.random()*120})`;
+                ctx.translate(20 + i * 28, canvas.height/2 + (Math.random() * 15 - 7.5));
+                ctx.rotate((Math.random() - 0.5) * 0.5);
+                ctx.fillText(question[i], 0, 0);
+                ctx.restore();
+            }
 
-  selectJuridica.addEventListener("click", () => {
-    showForm("<div class='card p-8 text-center'>Formulario Persona Jurídica (en construcción)</div>");
-  });
+            for (let i = 0; i < 8; i++) {
+                ctx.strokeStyle = `rgba(${Math.random()*150}, ${Math.random()*150}, ${Math.random()*150}, 0.3)`;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+        }
 
-  // Aquí continúa todo tu código original...
-  // No se modifica nada más de tu archivo original.
-</script>
+        // Lógica de Campos Geográficos
+        function setupGeoFields() {
+            const paisSelect = document.getElementById('pais');
+            const geoColombiaDiv = document.getElementById('geo-colombia');
+            const geoOtroDiv = document.getElementById('geo-otro');
+            const departamentoSelect = document.getElementById('departamento');
+            const ciudadSelect = document.getElementById('ciudad');
+            const paisManualInput = document.getElementById('paisManual');
+            const ciudadManualInput = document.getElementById('ciudadManual');
 
+            function toggleGeoFields() {
+                if (paisSelect.value === 'Colombia') {
+                    geoColombiaDiv.classList.remove('hidden');
+                    geoOtroDiv.classList.add('hidden');
+                    departamentoSelect.required = true;
+                    ciudadSelect.required = true;
+                    paisManualInput.required = false;
+                    ciudadManualInput.required = false;
+                } else {
+                    geoColombiaDiv.classList.add('hidden');
+                    geoOtroDiv.classList.remove('hidden');
+                    departamentoSelect.required = false;
+                    ciudadSelect.required = false;
+                    paisManualInput.required = true;
+                    ciudadManualInput.required = true;
+                }
+            }
+            
+            function populateDepartamentos() {
+                // Verificación robusta: chequeamos si geoData está vacío
+                if (Object.keys(geoData).length === 0 || !geoData.departamentos) {
+                    console.error("Error crítico al cargar geodata.json. Verifique la ruta y el contenido del archivo.");
+                    departamentoSelect.innerHTML = '<option value="">Error al cargar datos</option>'; // Mensaje de error genérico
+                    return;
+                };
+                departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
+                geoData.departamentos.forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto.departamento;
+                    option.textContent = depto.departamento;
+                    departamentoSelect.appendChild(option);
+                });
+                populateCiudades();
+            }
+
+            function populateCiudades() {
+                const selectedDepto = departamentoSelect.value;
+                ciudadSelect.innerHTML = '<option value="">Seleccione...</option>';
+                if (selectedDepto && geoData.departamentos) {
+                    const deptoData = geoData.departamentos.find(d => d.departamento === selectedDepto);
+                    if (deptoData) {
+                        deptoData.ciudades.forEach(ciudad => {
+                            const option = document.createElement('option');
+                            option.value = ciudad;
+                            option.textContent = ciudad;
+                            ciudadSelect.appendChild(option);
+                        });
+                    }
+                }
+            }
+
+            paisSelect.addEventListener('change', toggleGeoFields);
+            departamentoSelect.addEventListener('change', populateCiudades);
+            
+            toggleGeoFields();
+            populateDepartamentos();
+        }
+
+        // Lógica de Drag and Drop
+        function setupDragAndDrop() {
+            document.querySelectorAll('.file-drop-zone').forEach(dropZone => {
+                const input = dropZone.querySelector('.file-input');
+                const message = dropZone.querySelector('.file-drop-message');
+                
+                dropZone.addEventListener('click', () => input.click());
+
+                input.addEventListener('change', () => {
+                    if (input.files.length > 0) {
+                        message.textContent = input.files[0].name;
+                        message.classList.add('text-green-600', 'font-semibold');
+                        dropZone.style.borderColor = '#22C55E';
+                    }
+                });
+
+                dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+                dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        input.files = files;
+                        message.textContent = files[0].name;
+                        message.classList.add('text-green-600', 'font-semibold');
+                        dropZone.style.borderColor = '#22C55E';
+                    }
+                });
+            });
+        }
+
+        // Lógica de Envío de Formulario
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitButton = form.querySelector('#submit-button');
+            const btnText = form.querySelector('.btn-text');
+            const loader = form.querySelector('.loader');
+            const formMessage = form.querySelector('#form-message');
+            
+            const captchaInput = form.querySelector('#captchaInput');
+            if (parseInt(captchaInput.value, 10) !== captchaSolution) {
+                formMessage.innerHTML = '<p class="text-red-600">La respuesta de la verificación es incorrecta. Intente de nuevo.</p>';
+                setupCaptcha();
+                captchaInput.value = '';
+                captchaInput.focus();
+                return;
+            }
+
+            if (!form.checkValidity()) {
+                formMessage.innerHTML = '<p class="text-red-600">Por favor, complete todos los campos obligatorios (*).</p>';
+                form.reportValidity();
+                return;
+            }
+
+            btnText.classList.add('hidden');
+            loader.classList.remove('hidden');
+            submitButton.disabled = true;
+            formMessage.textContent = '';
+
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/api/save-pnatural', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    formMessage.innerHTML = `<p class="text-green-600 font-semibold">¡Información enviada con éxito! Gracias por registrarse.</p>`;
+                    form.reset();
+                    document.querySelectorAll('.file-drop-message').forEach(msg => {
+                        msg.textContent = 'Arrastre o haga clic para subir';
+                        msg.classList.remove('text-green-600', 'font-semibold');
+                    });
+                    document.querySelectorAll('.file-drop-zone').forEach(zone => zone.style.borderColor = '');
+                    setupGeoFields(); 
+                    setupCaptcha();
+                } else {
+                    throw new Error(result.message || 'Ocurrió un error al enviar el formulario.');
+                }
+            } catch (error) {
+                formMessage.innerHTML = `<p class="text-red-600">Error: ${error.message}</p>`;
+            } finally {
+                btnText.classList.remove('hidden');
+                loader.classList.add('hidden');
+                submitButton.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>
+
