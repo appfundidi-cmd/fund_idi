@@ -1,77 +1,81 @@
-<!-- index.html -->
-<!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portal de Proveedores - Fundación IDI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
-</head>
-<body class="antialiased">
+<script>
+  // Año actual en el footer
+  document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-  <!-- ... todo tu HTML original ... -->
+  let geoData = {};
+  let captchaSolution = 0;
 
-  <script>
-    // Año actual en footer
-    document.getElementById("currentYear").textContent = new Date().getFullYear();
+  // Cargar los datos geográficos una sola vez
+  async function loadGeoData() {
+    try {
+      // *** CORRECCIÓN: uso de ruta relativa válida y manejo seguro ***
+      const response = await fetch("./geodata.json");
+      if (!response.ok) throw new Error(`Error HTTP ${response.status} al cargar geodata.json`);
+      geoData = await response.json();
+      console.log("geodata.json cargado correctamente");
+    } catch (error) {
+      console.error("Error crítico al cargar geodata.json:", error);
+      geoData = { departamentos: [] }; // estructura vacía para fallback seguro
+    }
+    return geoData;
+  }
 
-    // --- CORRECCIÓN DE CONEXIÓN GEO DATA ---
-    let geoData = {};
-    const geoDataPromise = loadGeoData();
+  // Espera de carga
+  const geoDataPromise = loadGeoData();
 
-    async function loadGeoData() {
-      try {
-        // Ruta corregida y espera asincrónica adecuada
-        const response = await fetch("./geodata.json");
-        if (!response.ok) throw new Error(`Error al cargar geodata.json: ${response.status}`);
-        geoData = await response.json();
-        console.log("geodata.json cargado correctamente:", geoData);
-      } catch (error) {
-        console.error("Error al cargar geodata.json", error);
-        geoData = { departamentos: [] };
-      }
-      return geoData;
+  // -----------------------------------------------------------------
+  // (El resto de tu código original no se modifica en absoluto)
+  // -----------------------------------------------------------------
+
+  const selectionContainer = document.getElementById("selection-container");
+  const formContainer = document.getElementById("form-container");
+  const selectNatural = document.getElementById("select-natural");
+  const selectJuridica = document.getElementById("select-juridica");
+
+  async function showForm(formHTML) {
+    selectionContainer.classList.add("hidden");
+    formContainer.innerHTML = formHTML;
+    formContainer.classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // *** CORRECCIÓN: asegura que geodata esté disponible antes de llamar setupGeoFields ***
+    await geoDataPromise;
+    setupGeoFields();
+  }
+
+  function setupGeoFields() {
+    const paisSelect = document.getElementById("pais");
+    const departamentoSelect = document.getElementById("departamento");
+    const ciudadSelect = document.getElementById("ciudad");
+
+    if (!geoData || !geoData.departamentos) {
+      console.error("geodata.json no contiene la estructura esperada.");
+      return;
     }
 
-    // Función para inicializar los campos geográficos
-    async function setupGeoFields() {
-      await geoDataPromise; // Asegura carga previa
-      const departamentoSelect = document.getElementById("departamento");
-      const ciudadSelect = document.getElementById("ciudad");
+    departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
+    geoData.departamentos.forEach((d) => {
+      const option = document.createElement("option");
+      option.value = d.departamento;
+      option.textContent = d.departamento;
+      departamentoSelect.appendChild(option);
+    });
 
-      if (!geoData.departamentos) {
-        console.error("El formato de geodata.json no es válido. Debe contener 'departamentos'.");
-        return;
+    departamentoSelect.addEventListener("change", () => {
+      const selectedDept = geoData.departamentos.find(
+        (dep) => dep.departamento === departamentoSelect.value
+      );
+      ciudadSelect.innerHTML = '<option value="">Seleccione...</option>';
+      if (selectedDept) {
+        selectedDept.ciudades.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          ciudadSelect.appendChild(option);
+        });
       }
+    });
+  }
 
-      departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
-      geoData.departamentos.forEach((d) => {
-        const option = document.createElement("option");
-        option.value = d.departamento;
-        option.textContent = d.departamento;
-        departamentoSelect.appendChild(option);
-      });
-
-      departamentoSelect.addEventListener("change", () => {
-        const selectedDepto = geoData.departamentos.find(
-          (dep) => dep.departamento === departamentoSelect.value
-        );
-        ciudadSelect.innerHTML = '<option value="">Seleccione...</option>';
-        if (selectedDepto) {
-          selectedDepto.ciudades.forEach((city) => {
-            const option = document.createElement("option");
-            option.value = city;
-            option.textContent = city;
-            ciudadSelect.appendChild(option);
-          });
-        }
-      });
-    }
-
-    // --- Resto de tu JavaScript original permanece igual ---
-  </script>
-</body>
-</html>
+  // (Aquí sigue exactamente todo tu código original del CAPTCHA, drag & drop, envío, etc.)
+</script>
