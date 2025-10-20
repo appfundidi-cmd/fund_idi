@@ -86,19 +86,20 @@
         let captchaSolution = 0;
 
         // Cargar los datos geográficos una sola vez
-       async function loadGeoData() {
-  try {
-    const response = await fetch("geodata.json");
-    if (!response.ok) throw new Error("Error al cargar geodata.json");
-    geoData = await response.json();
-  } catch (error) {
-    console.error("Error al cargar geodata.json", error);
-    geoData = { departamentos: [] };
-  }
-  return geoData;
-}
-const geoDataPromise = loadGeoData();
-
+        async function loadGeoData() {
+            try {
+                // CORRECCIÓN DEFINITIVA: Usar ruta relativa que funcionaba originalmente.
+                const response = await fetch('geodata.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                geoData = await response.json();
+            } catch (error) {
+                console.error("Error crítico al cargar geodata.json:", error);
+                // Dejamos geoData como un objeto vacío para que las funciones posteriores lo detecten
+            }
+        }
+        const geoDataPromise = loadGeoData();
 
 
         // Lógica de Selección y carga de formularios
@@ -324,9 +325,7 @@ const geoDataPromise = loadGeoData();
 
             if (formHTML === naturalFormHTML) {
                 // Esperamos a que la carga del JSON termine (éxito o fracaso)
-               await geoDataPromise;
-              setupGeoFields();
-
+                await geoDataPromise;
                 
                 const form = document.getElementById('natural-form');
                 form.addEventListener('submit', handleFormSubmit);
