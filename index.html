@@ -95,10 +95,12 @@
                 geoData = await response.json();
             } catch (error) {
                 console.error("Error cargando geodata.json:", error);
-                alert("Error crítico: No se pudo cargar la información de departamentos y ciudades. Por favor, recargue la página.");
+                // No usamos alert para no bloquear la carga de la página
             }
         }
-        loadGeoData();
+        // Iniciar la carga de datos geográficos inmediatamente
+        const geoDataPromise = loadGeoData();
+
 
         // Lógica de Selección y carga de formularios
         const selectionContainer = document.getElementById('selection-container');
@@ -315,13 +317,16 @@
         
         const juridicaFormHTML = `<!-- Formulario para Persona Jurídica será construido aquí -->`;
 
-        const showForm = (formHTML) => {
+        const showForm = async (formHTML) => {
             selectionContainer.classList.add('hidden');
             formContainer.innerHTML = formHTML;
             formContainer.classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (formHTML === naturalFormHTML) {
+                // Esperamos a que los datos geográficos estén listos antes de configurar los campos
+                await geoDataPromise;
+                
                 const form = document.getElementById('natural-form');
                 form.addEventListener('submit', handleFormSubmit);
                 setupDragAndDrop();
@@ -397,14 +402,15 @@
         // Lógica de Campos Geográficos
         function setupGeoFields() {
             const paisSelect = document.getElementById('pais');
-            if (!paisSelect) return;
-
             const geoColombiaDiv = document.getElementById('geo-colombia');
             const geoOtroDiv = document.getElementById('geo-otro');
             const departamentoSelect = document.getElementById('departamento');
             const ciudadSelect = document.getElementById('ciudad');
             const paisManualInput = document.getElementById('paisManual');
             const ciudadManualInput = document.getElementById('ciudadManual');
+
+            // Esta función se llama solo después de que geoDataPromise se resuelve.
+            // Por lo tanto, geoData está garantizado que existe.
 
             function toggleGeoFields() {
                 if (paisSelect.value === 'Colombia') {
@@ -425,10 +431,11 @@
             }
             
             function populateDepartamentos() {
-                if (!geoData.departamentos) {
-                    setTimeout(populateDepartamentos, 200); // Reintentar si los datos no han cargado
+                if (!geoData || !geoData.departamentos) {
+                    console.error("Los datos de departamentos no están disponibles.");
+                    departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
                     return;
-                }
+                };
                 departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
                 geoData.departamentos.forEach(depto => {
                     const option = document.createElement('option');
@@ -457,7 +464,6 @@
             paisSelect.addEventListener('change', toggleGeoFields);
             departamentoSelect.addEventListener('change', populateCiudades);
             
-            // Initial state
             toggleGeoFields();
             populateDepartamentos();
         }
