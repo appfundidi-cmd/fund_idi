@@ -88,7 +88,7 @@
         // Cargar los datos geográficos una sola vez
        async function loadGeoData() {
   try {
-    const response = await fetch(".geodata.json");
+    const response = await fetch("./geodata.json");
     if (!response.ok) throw new Error("Error al cargar geodata.json");
     geoData = await response.json();
   } catch (error) {
