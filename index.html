@@ -88,13 +88,14 @@
         // Cargar los datos geográficos una sola vez
         async function loadGeoData() {
             try {
+                // CORRECCIÓN DEFINITIVA: Usar ruta relativa que funcionaba originalmente.
                 const response = await fetch('geodata.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 geoData = await response.json();
             } catch (error) {
-                console.error("Error crítico cargando geodata.json:", error);
+                console.error("Error crítico al cargar geodata.json:", error);
                 // Dejamos geoData como un objeto vacío para que las funciones posteriores lo detecten
             }
         }
@@ -426,8 +427,8 @@
             function populateDepartamentos() {
                 // Verificación robusta: chequeamos si geoData está vacío
                 if (Object.keys(geoData).length === 0 || !geoData.departamentos) {
-                    console.error("Los datos geográficos no se cargaron. Verifique la ruta y el contenido de geodata.json.");
-                    departamentoSelect.innerHTML = '<option value="">Error: geodata.json no encontrado</option>'; // Mensaje de error explícito
+                    console.error("Error crítico al cargar geodata.json. Verifique la ruta y el contenido del archivo.");
+                    departamentoSelect.innerHTML = '<option value="">Error al cargar datos</option>'; // Mensaje de error genérico
                     return;
                 };
                 departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
@@ -437,7 +438,7 @@
                     option.textContent = depto.departamento;
                     departamentoSelect.appendChild(option);
                 });
-                populateCiudades(); // Llenar ciudades para el primer departamento
+                populateCiudades();
             }
 
             function populateCiudades() {
