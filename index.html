@@ -90,15 +90,14 @@
             try {
                 const response = await fetch('geodata.json');
                 if (!response.ok) {
-                    throw new Error('No se pudo cargar la información geográfica.');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 geoData = await response.json();
             } catch (error) {
-                console.error("Error cargando geodata.json:", error);
-                // No usamos alert para no bloquear la carga de la página
+                console.error("Error crítico cargando geodata.json:", error);
+                // Dejamos geoData como un objeto vacío para que las funciones posteriores lo detecten
             }
         }
-        // Iniciar la carga de datos geográficos inmediatamente
         const geoDataPromise = loadGeoData();
 
 
@@ -324,13 +323,13 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (formHTML === naturalFormHTML) {
-                // Esperamos a que los datos geográficos estén listos antes de configurar los campos
+                // Esperamos a que la carga del JSON termine (éxito o fracaso)
                 await geoDataPromise;
                 
                 const form = document.getElementById('natural-form');
                 form.addEventListener('submit', handleFormSubmit);
                 setupDragAndDrop();
-                setupGeoFields();
+                setupGeoFields(); // Esta función ahora se ejecuta con la certeza de que loadGeoData ha terminado
                 setupCaptcha();
                 document.getElementById('reload-captcha').addEventListener('click', setupCaptcha);
                 document.getElementById('captchaCanvas').addEventListener('click', setupCaptcha);
@@ -373,12 +372,10 @@
                 case 'x': captchaSolution = num1 * num2; break;
             }
 
-            // Dibuja el CAPTCHA
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#f9fafb';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Dibuja el texto con distorsión
             for (let i = 0; i < question.length; i++) {
                 ctx.save();
                 ctx.font = `${Math.random() * 12 + 28}px ${fonts[Math.floor(Math.random() * fonts.length)]}`;
@@ -389,7 +386,6 @@
                 ctx.restore();
             }
 
-            // Dibuja ruido de fondo
             for (let i = 0; i < 8; i++) {
                 ctx.strokeStyle = `rgba(${Math.random()*150}, ${Math.random()*150}, ${Math.random()*150}, 0.3)`;
                 ctx.beginPath();
@@ -408,9 +404,6 @@
             const ciudadSelect = document.getElementById('ciudad');
             const paisManualInput = document.getElementById('paisManual');
             const ciudadManualInput = document.getElementById('ciudadManual');
-
-            // Esta función se llama solo después de que geoDataPromise se resuelve.
-            // Por lo tanto, geoData está garantizado que existe.
 
             function toggleGeoFields() {
                 if (paisSelect.value === 'Colombia') {
@@ -431,9 +424,10 @@
             }
             
             function populateDepartamentos() {
-                if (!geoData || !geoData.departamentos) {
-                    console.error("Los datos de departamentos no están disponibles.");
-                    departamentoSelect.innerHTML = '<option value="">Error al cargar</option>';
+                // Verificación robusta: chequeamos si geoData está vacío
+                if (Object.keys(geoData).length === 0 || !geoData.departamentos) {
+                    console.error("Los datos geográficos no se cargaron. Verifique la ruta y el contenido de geodata.json.");
+                    departamentoSelect.innerHTML = '<option value="">Error: geodata.json no encontrado</option>'; // Mensaje de error explícito
                     return;
                 };
                 departamentoSelect.innerHTML = '<option value="">Seleccione...</option>';
@@ -443,6 +437,7 @@
                     option.textContent = depto.departamento;
                     departamentoSelect.appendChild(option);
                 });
+                populateCiudades(); // Llenar ciudades para el primer departamento
             }
 
             function populateCiudades() {
@@ -510,11 +505,10 @@
             const loader = form.querySelector('.loader');
             const formMessage = form.querySelector('#form-message');
             
-            // Validación del CAPTCHA
             const captchaInput = form.querySelector('#captchaInput');
             if (parseInt(captchaInput.value, 10) !== captchaSolution) {
                 formMessage.innerHTML = '<p class="text-red-600">La respuesta de la verificación es incorrecta. Intente de nuevo.</p>';
-                setupCaptcha(); // Genera un nuevo desafío
+                setupCaptcha();
                 captchaInput.value = '';
                 captchaInput.focus();
                 return;
